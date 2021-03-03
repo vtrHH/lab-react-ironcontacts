@@ -5,15 +5,7 @@ import contacts from './contacts.json';
 
 let people = contacts.slice(0, 5);
 
-function App() {
-  return (
-    <div className="App">
-      <Display />
-    </div>
-  );
-}
-
-class Display extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,7 +17,7 @@ class Display extends React.Component {
   renderTableData = () => {
     return this.state.people.map((person) => {
       return (
-        <tr key={person.name}>
+        <tr key={person.id}>
           <td>
             <img
               className="person-picture"
@@ -35,6 +27,9 @@ class Display extends React.Component {
           </td>
           <td>{person.name}</td>
           <td>{person.popularity}</td>
+          <td>
+            <button onClick={this.deleteContacts}>Delete</button>
+          </td>
         </tr>
       );
     });
@@ -56,28 +51,46 @@ class Display extends React.Component {
   // Sort by Name --> in progress
 
   sortAlphabetically = () => {
-    return this.state.people.sort(function (a, b) {
-      let nameA = this.state.people.name.toLowerCase();
-      let nameB = this.state.people.name.toLowerCase();
-      if (nameA < nameB) {
-        return -1;
-      }
-      if (nameA > nameB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
+    const people = this.state.people;
+    const alphabeticallySortedPeople = [...people];
+    alphabeticallySortedPeople.sort((a, b) => (a.name > b.name ? 1 : -1));
+    this.setState({ people: alphabeticallySortedPeople });
   };
 
   // Sort by Popularity
+  sortByPopularity = () => {
+    const people = this.state.people;
+    const sortedPeopleByPopularity = [...people];
+    sortedPeopleByPopularity.sort((a, b) => a.popularity - b.popularity);
+    this.setState({ people: sortedPeopleByPopularity });
+  };
+
+  // Delete Contacts
+  deleteContacts = (event) => {
+    // Copying the array
+    const people = this.state.people;
+    const peopleToRemove = [...people];
+    // Get index of Person to remove ---> not working
+    peopleToRemove.map((person, index) => {
+      const indexOfPersonToRemove = peopleToRemove.findIndex(
+        (person) => person.id
+      );
+      console.log(indexOfPersonToRemove);
+
+      // Remove Person
+      if (indexOfPersonToRemove !== -1) {
+        peopleToRemove.splice(indexOfPersonToRemove, 1);
+        this.setState({ people: peopleToRemove });
+      }
+    });
+  };
 
   render() {
     return (
       <div>
         <button onClick={this.addRandomContact}>Add Random Contact</button>
         <button onClick={this.sortAlphabetically}>Sort by name</button>
-        <button>Sort by popularity</button>
+        <button onClick={this.sortByPopularity}>Sort by popularity</button>
         <table>
           <tbody>{this.renderTableData()}</tbody>
         </table>
