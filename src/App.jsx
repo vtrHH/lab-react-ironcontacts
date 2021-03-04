@@ -28,7 +28,9 @@ class App extends React.Component {
           <td>{person.name}</td>
           <td>{person.popularity}</td>
           <td>
-            <button onClick={this.deleteContacts}>Delete</button>
+            <button onClick={() => this.removeContacts(person.id)}>
+              Delete
+            </button>
           </td>
         </tr>
       );
@@ -51,47 +53,48 @@ class App extends React.Component {
   // Sort by Name --> in progress
 
   sortAlphabetically = () => {
-    const people = this.state.people;
-    const alphabeticallySortedPeople = [...people];
+    const alphabeticallySortedPeople = [...this.state.people];
     alphabeticallySortedPeople.sort((a, b) => (a.name > b.name ? 1 : -1));
     this.setState({ people: alphabeticallySortedPeople });
   };
 
   // Sort by Popularity
   sortByPopularity = () => {
-    const people = this.state.people;
-    const sortedPeopleByPopularity = [...people];
-    sortedPeopleByPopularity.sort((a, b) => a.popularity - b.popularity);
+    const sortedPeopleByPopularity = [...this.state.people];
+    sortedPeopleByPopularity.sort((a, b) => b.popularity - a.popularity);
     this.setState({ people: sortedPeopleByPopularity });
   };
 
   // Delete Contacts
-  deleteContacts = (event) => {
+  removeContacts = (id) => {
     // Copying the array
-    const people = this.state.people;
-    const peopleToRemove = [...people];
-    // Get index of Person to remove ---> not working
-    peopleToRemove.map((person, index) => {
-      const indexOfPersonToRemove = peopleToRemove.findIndex(
-        (person) => person.id
-      );
-      console.log(indexOfPersonToRemove);
-
-      // Remove Person
-      if (indexOfPersonToRemove !== -1) {
-        peopleToRemove.splice(indexOfPersonToRemove, 1);
-        this.setState({ people: peopleToRemove });
-      }
-    });
+    const peopleToMaintain = [...this.state.people];
+    // Get index of Person to remove
+    const index = peopleToMaintain.findIndex((person) => person.id === id);
+    // Remove Person
+    if (peopleToMaintain !== -1) {
+      peopleToMaintain.splice(index, 1);
+      this.setState({ people: peopleToMaintain });
+    }
   };
 
   render() {
     return (
       <div>
-        <button onClick={this.addRandomContact}>Add Random Contact</button>
-        <button onClick={this.sortAlphabetically}>Sort by name</button>
-        <button onClick={this.sortByPopularity}>Sort by popularity</button>
+        <div>
+          <button onClick={this.addRandomContact}>Add Random Contact</button>
+          <button onClick={this.sortAlphabetically}>Sort by name</button>
+          <button onClick={this.sortByPopularity}>Sort by popularity</button>
+        </div>
         <table>
+          <head>
+            <tr>
+              <th>Picture</th>
+              <th>Name</th>
+              <th>Popularity</th>
+              <th>Action</th>
+            </tr>
+          </head>
           <tbody>{this.renderTableData()}</tbody>
         </table>
       </div>
